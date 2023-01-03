@@ -44,6 +44,7 @@ where
     }
 }
 
+/// Provides a predicates library [Predicate<T>] implementation for a given googletest library [Matcher<T>].
 pub fn predicate<M: Matcher<T>, T: Debug>(matcher: M) -> impl Predicate<T> {
     MatcherPredicateWrapper {
         matcher,
