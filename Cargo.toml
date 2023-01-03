@@ -1,6 +1,6 @@
 [package]
 name = "googletest-predicates"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Provides a function to convert googletest matchers into predicates."
 license = "MIT"

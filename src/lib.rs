@@ -5,7 +5,15 @@ use std::{
     marker::PhantomData,
 };
 
-struct MatcherPredicateWrapper<M, T>
+/// Provides a [Predicate] implementation for a given googletest [Matcher].
+pub fn predicate<M: Matcher<T>, T: Debug>(matcher: M) -> impl Predicate<T> {
+    MatcherPredicate {
+        matcher,
+        _phantom_data_t: Default::default(),
+    }
+}
+
+struct MatcherPredicate<M, T>
 where
     M: Matcher<T>,
     T: Debug,
@@ -14,24 +22,7 @@ where
     _phantom_data_t: PhantomData<T>,
 }
 
-impl<M, T> Display for MatcherPredicateWrapper<M, T>
-where
-    M: Matcher<T>,
-    T: Debug,
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.matcher.describe(MatcherResult::Matches))
-    }
-}
-
-impl<M, T> PredicateReflection for MatcherPredicateWrapper<M, T>
-where
-    M: Matcher<T>,
-    T: Debug,
-{
-}
-
-impl<M, T> Predicate<T> for MatcherPredicateWrapper<M, T>
+impl<M, T> Predicate<T> for MatcherPredicate<M, T>
 where
     M: Matcher<T>,
     T: Debug,
@@ -44,10 +35,19 @@ where
     }
 }
 
-/// Provides a predicates library [Predicate<T>] implementation for a given googletest library [Matcher<T>].
-pub fn predicate<M: Matcher<T>, T: Debug>(matcher: M) -> impl Predicate<T> {
-    MatcherPredicateWrapper {
-        matcher,
-        _phantom_data_t: Default::default(),
+impl<M, T> PredicateReflection for MatcherPredicate<M, T>
+where
+    M: Matcher<T>,
+    T: Debug,
+{
+}
+
+impl<M, T> Display for MatcherPredicate<M, T>
+where
+    M: Matcher<T>,
+    T: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.matcher.describe(MatcherResult::Matches))
     }
 }
