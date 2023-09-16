@@ -1,10 +1,10 @@
 [package]
 name = "googletest-predicates"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
-description = "Provides a function to convert googletest matchers into predicates."
+description = "Provides a function to convert googletest matchers (https://docs.rs/googletest/latest/googletest/) into predicates (https://docs.rs/predicates/latest/predicates)."
 license = "MIT"
 
 [dependencies]
-googletest = '0.3'
-predicates = '2.1'
+googletest = '0.10'
+predicates = '3.0'

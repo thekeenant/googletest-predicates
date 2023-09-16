@@ -6,7 +6,7 @@ use std::{
 };
 
 /// Provides a [Predicate] implementation for a given googletest [Matcher].
-pub fn predicate<M: Matcher<T>, T: Debug>(matcher: M) -> impl Predicate<T> {
+pub fn predicate<M: Matcher<ActualT = T>, T: Debug>(matcher: M) -> impl Predicate<T> {
     MatcherPredicate {
         matcher,
         _phantom_data_t: Default::default(),
@@ -15,7 +15,7 @@ pub fn predicate<M: Matcher<T>, T: Debug>(matcher: M) -> impl Predicate<T> {
 
 struct MatcherPredicate<M, T>
 where
-    M: Matcher<T>,
+    M: Matcher<ActualT = T>,
     T: Debug,
 {
     matcher: M,
@@ -24,30 +24,30 @@ where
 
 impl<M, T> Predicate<T> for MatcherPredicate<M, T>
 where
-    M: Matcher<T>,
+    M: Matcher<ActualT = T>,
     T: Debug,
 {
     fn eval(&self, variable: &T) -> bool {
         match self.matcher.matches(variable) {
-            MatcherResult::Matches => true,
-            MatcherResult::DoesNotMatch => false,
+            MatcherResult::Match => true,
+            MatcherResult::NoMatch => false,
         }
     }
 }
 
 impl<M, T> PredicateReflection for MatcherPredicate<M, T>
 where
-    M: Matcher<T>,
+    M: Matcher<ActualT = T>,
     T: Debug,
 {
 }
 
 impl<M, T> Display for MatcherPredicate<M, T>
 where
-    M: Matcher<T>,
+    M: Matcher<ActualT = T>,
     T: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.matcher.describe(MatcherResult::Matches))
+        f.write_str(&self.matcher.describe(MatcherResult::Match))
     }
 }
